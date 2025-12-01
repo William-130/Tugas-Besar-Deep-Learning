@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Model files (too large for GitHub)
+*.pth
+*.pkl
+*.h5
+*.ckpt
+
+# Data
+Train/
+test/
+*.jpg
+*.jpeg
+*.png
+*.gif
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Documentation - Keep only README.md
+FACENET_ARCHITECTURE.md
+RESNET50_ARCHITECTURE.md
+FACENET_COMPARISON.md
+IMPLEMENTATION_SUMMARY.md
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
