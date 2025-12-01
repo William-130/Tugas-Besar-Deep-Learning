@@ -7,6 +7,7 @@ import numpy as np
 import pickle
 from facenet_pytorch import InceptionResnetV1, MTCNN
 import cv2
+import os
 
 # ==================== CONFIGURATION ====================
 st.set_page_config(
@@ -21,9 +22,37 @@ CLASS_NAMES_PATH = 'class_names.pkl'
 MODEL_INFO_PATH = 'model_info.pkl'
 IMG_SIZE = 160
 
+# ==================== AUTO-DOWNLOAD MODELS ====================
+def download_models():
+    """Download models from Google Drive if not present"""
+    try:
+        from download_models import check_and_download_models
+        
+        # Check if models exist
+        if not os.path.exists(FACENET_MODEL_PATH) or not os.path.exists(MODEL_PATH):
+            with st.spinner("📥 Downloading models from Google Drive..."):
+                success = check_and_download_models()
+                if not success:
+                    st.error("Failed to download models. Please check the configuration.")
+                    st.stop()
+    except ImportError:
+        # If download_models.py doesn't exist, show error
+        if not os.path.exists(FACENET_MODEL_PATH) or not os.path.exists(MODEL_PATH):
+            st.error(f"""
+            ❌ Missing model files and download_models.py not found!
+            
+            Please ensure these files exist:
+            - {FACENET_MODEL_PATH}
+            - {MODEL_PATH}
+            """)
+            st.stop()
+
 # ==================== LOAD RESOURCES ====================
 @st.cache_resource
 def load_resources():
+    # First, ensure models are downloaded
+    download_models()
+    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     # Load FaceNet model with class names
