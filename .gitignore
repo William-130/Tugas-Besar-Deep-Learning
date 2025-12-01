@@ -14,11 +14,15 @@ venv/
 ENV/
 env/
 
-# Model files (too large for GitHub)
+# Model files (exclude others, but include the trained FaceNet models)
 *.pth
 *.pkl
 *.h5
 *.ckpt
+
+# Allow specific trained models
+!models/facenet_model_20251201_225633.pkl
+!models/facenet_classifier_20251201_225633.pth
 
 # Data
 Train/
