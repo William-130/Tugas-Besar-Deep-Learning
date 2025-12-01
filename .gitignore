@@ -57,6 +57,10 @@ IMPLEMENTATION_SUMMARY.md
 # Logs
 *.log
 
+# Attendance logs
+attendance_log.csv
+attendance_export_*.csv
+
 # Temporary files
 *.tmp
 *.bak

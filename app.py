@@ -8,6 +8,8 @@ import pickle
 from facenet_pytorch import InceptionResnetV1, MTCNN
 import cv2
 import os
+from datetime import datetime
+from attendance_system import AttendanceSystem
 
 # ==================== CONFIGURATION ====================
 st.set_page_config(
@@ -193,48 +195,61 @@ st.markdown(f"""
 
 st.markdown("---")
 
-# Sidebar
-with st.sidebar:
-    st.header("⚙️ Settings")
-    
-    confidence_threshold = st.slider(
-        "Confidence Threshold",
-        min_value=0.0,
-        max_value=1.0,
-        value=0.5,
-        step=0.05,
-        help="Minimum confidence to show prediction"
+# Create tabs
+tab1, tab2 = st.tabs(["🔍 Face Recognition", "📊 Attendance Dashboard"])
+
+with tab1:
+    # Sidebar
+    with st.sidebar:
+        st.header("⚙️ Settings")
+        
+        confidence_threshold = st.slider(
+            "Confidence Threshold",
+            min_value=0.0,
+            max_value=1.0,
+            value=0.5,
+            step=0.05,
+            help="Minimum confidence to show prediction"
+        )
+        
+        enable_attendance = st.checkbox(
+            "📝 Record Attendance",
+            value=True,
+            help="Automatically record attendance when face is recognized"
+        )
+
+    # Input method selection
+    input_method = st.radio(
+        "Choose input method:",
+        ["📤 Upload Image", "📷 Take Photo"],
+        horizontal=True
     )
 
-# Input method selection
-input_method = st.radio(
-    "Choose input method:",
-    ["📤 Upload Image", "📷 Take Photo"],
-    horizontal=True
-)
+    st.markdown("---")
 
-st.markdown("---")
+    uploaded_file = None
+    camera_image = None
 
-uploaded_file = None
-camera_image = None
+    if input_method == "📤 Upload Image":
+        # File uploader
+        uploaded_file = st.file_uploader(
+            "Upload an image containing faces",
+            type=["jpg", "jpeg", "png"],
+            help="Supported formats: JPG, JPEG, PNG"
+        )
+    else:
+        # Camera input
+        camera_image = st.camera_input("Take a photo")
+        if camera_image is not None:
+            uploaded_file = camera_image
 
-if input_method == "📤 Upload Image":
-    # File uploader
-    uploaded_file = st.file_uploader(
-        "Upload an image containing faces",
-        type=["jpg", "jpeg", "png"],
-        help="Supported formats: JPG, JPEG, PNG"
-    )
-else:
-    # Camera input
-    camera_image = st.camera_input("Take a photo")
-    if camera_image is not None:
-        uploaded_file = camera_image
-
-if uploaded_file is not None:
-    # Display original image
-    image = Image.open(uploaded_file).convert('RGB')
-    image_np = np.array(image)
+    if uploaded_file is not None:
+        # Initialize attendance system
+        attendance = AttendanceSystem()
+        
+        # Display original image
+        image = Image.open(uploaded_file).convert('RGB')
+        image_np = np.array(image)
     
     col1, col2 = st.columns(2)
     
@@ -339,9 +354,134 @@ if uploaded_file is not None:
                         with col_c:
                             status = "✅ Recognized" if result['confidence'] >= confidence_threshold else "⚠️ Low Confidence"
                             st.metric("Status", status)
+                        
+                        # Record attendance if enabled and confidence is high enough
+                        if enable_attendance and result['confidence'] >= confidence_threshold:
+                            try:
+                                entry = attendance.record_attendance(
+                                    result['name'], 
+                                    result['confidence'],
+                                    status='present'
+                                )
+                                st.success(f"✅ Attendance recorded at {entry['time']}")
+                            except Exception as e:
+                                st.warning(f"⚠️ Could not record attendance: {e}")
                 
             else:
                 st.warning("⚠️ No faces detected in the image. Please try another image.")
+
+with tab2:
+    st.header("📊 Attendance Dashboard")
+    
+    # Initialize attendance system
+    attendance = AttendanceSystem()
+    
+    # Date selector
+    col_date1, col_date2 = st.columns([2, 1])
+    with col_date1:
+        selected_date = st.date_input(
+            "Select Date",
+            value=datetime.now(),
+            max_value=datetime.now()
+        )
+    with col_date2:
+        if st.button("🔄 Refresh Data", use_container_width=True):
+            st.rerun()
+    
+    # Convert date to string
+    date_str = selected_date.strftime('%Y-%m-%d')
+    
+    # Get daily summary
+    summary = attendance.get_daily_summary(date_str)
+    
+    # Display metrics
+    st.markdown("### Today's Summary")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric(
+            "📅 Date",
+            date_str
+        )
+    with col2:
+        st.metric(
+            "👥 Unique People",
+            summary['unique_people']
+        )
+    with col3:
+        st.metric(
+            "🔢 Total Detections",
+            summary['total_records']
+        )
+    
+    st.markdown("---")
+    
+    # Show attendance list
+    if summary['unique_people'] > 0:
+        st.markdown("### 📋 Attendance List")
+        
+        # Convert to DataFrame for better display
+        import pandas as pd
+        df_summary = pd.DataFrame(summary['people_list'])
+        df_summary['avg_confidence'] = df_summary['avg_confidence'].apply(lambda x: f"{x*100:.2f}%")
+        df_summary.columns = ['Name', 'First Seen', 'Avg Confidence']
+        
+        st.dataframe(
+            df_summary,
+            use_container_width=True,
+            hide_index=True
+        )
+        
+        # Export option
+        st.markdown("---")
+        col_exp1, col_exp2 = st.columns([3, 1])
+        
+        with col_exp2:
+            if st.button("📥 Export to CSV", use_container_width=True):
+                export_file = attendance.export_to_csv(date=date_str)
+                st.success(f"✅ Exported to: {export_file}")
+                
+                # Provide download button
+                with open(export_file, 'r') as f:
+                    st.download_button(
+                        label="⬇️ Download CSV",
+                        data=f.read(),
+                        file_name=export_file,
+                        mime='text/csv',
+                        use_container_width=True
+                    )
+    else:
+        st.info(f"ℹ️ No attendance records for {date_str}")
+    
+    # Show all-time statistics
+    st.markdown("---")
+    st.markdown("### 📈 All-Time Statistics")
+    
+    all_people = attendance.get_all_people_summary()
+    
+    if not all_people.empty:
+        col_stat1, col_stat2 = st.columns(2)
+        
+        with col_stat1:
+            st.metric("Total People Registered", len(all_people))
+        
+        with col_stat2:
+            total_records = all_people['total_detections'].sum()
+            st.metric("Total Detection Records", int(total_records))
+        
+        # Show top 10 most detected people
+        st.markdown("#### 🏆 Most Frequent Attendance")
+        top_10 = all_people.nlargest(10, 'total_detections')[['name', 'total_detections', 'avg_confidence']]
+        top_10['avg_confidence'] = top_10['avg_confidence'].apply(lambda x: f"{x*100:.2f}%")
+        top_10.columns = ['Name', 'Total Detections', 'Avg Confidence']
+        
+        st.dataframe(
+            top_10,
+            use_container_width=True,
+            hide_index=True
+        )
+    else:
+        st.info("ℹ️ No attendance records yet. Start recognizing faces to build the database!")
 
 # Footer
 st.markdown("---")
