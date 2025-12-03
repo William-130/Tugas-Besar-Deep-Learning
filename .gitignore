@@ -29,8 +29,14 @@ Train/
 test/
 *.jpg
 *.jpeg
-*.png
-*.gif
+
+# Allow evaluation images (PNG)
+!*.png
+!evaluation_images/*.png
+
+# Allow evaluation CSV files
+!evaluation_metrics_summary.csv
+!per_class_metrics.csv
 
 # Jupyter Notebook
 .ipynb_checkpoints/
