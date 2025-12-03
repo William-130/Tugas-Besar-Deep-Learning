@@ -36,6 +36,9 @@ test/
 .ipynb_checkpoints/
 *.ipynb
 
+# Allow specific notebooks
+!program_test.ipynb
+
 # IDE
 .vscode/
 .idea/

@@ -250,125 +250,125 @@ with tab1:
         # Display original image
         image = Image.open(uploaded_file).convert('RGB')
         image_np = np.array(image)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.subheader("📷 Original Image")
-        st.image(image, use_container_width=True)
-    
-    if st.button("🔍 Analyze", type="primary", use_container_width=True):
-        with st.spinner('Detecting faces with MTCNN...'):
-            # Detect faces with MTCNN
-            boxes, probs = mtcnn.detect(image)
-            
-            if boxes is not None and len(boxes) > 0:
-                st.success(f"✅ Detected **{len(boxes)}** face(s)")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("📷 Original Image")
+            st.image(image, use_container_width=True)
+        
+        if st.button("🔍 Analyze", type="primary", use_container_width=True):
+            with st.spinner('Detecting faces with MTCNN...'):
+                # Detect faces with MTCNN
+                boxes, probs = mtcnn.detect(image)
                 
-                # Draw on image
-                img_draw = image_np.copy()
-                
-                results = []
-                
-                for i, (box, prob) in enumerate(zip(boxes, probs)):
-                    if prob < 0.9:  # MTCNN confidence threshold
-                        continue
-                    
-                    # Extract face region
-                    x1, y1, x2, y2 = [int(b) for b in box]
-                    x1, y1 = max(0, x1), max(0, y1)
-                    x2, y2 = min(image_np.shape[1], x2), min(image_np.shape[0], y2)
-                    
-                    face = image_np[y1:y2, x1:x2]
-                    
-                    if face.size == 0:
-                        continue
-                    
-                    # Preprocess face
-                    face_pil = Image.fromarray(face).resize((IMG_SIZE, IMG_SIZE))
-                    face_tensor = transform(face_pil).unsqueeze(0).to(device)
-                    
-                    # Predict
-                    with torch.no_grad():
-                        outputs = model(face_tensor)
-                        probs_pred = torch.nn.functional.softmax(outputs, dim=1)
-                        confidence, predicted_idx = torch.max(probs_pred, 1)
-                        
-                        confidence = confidence.item()
-                        predicted_class = class_names[predicted_idx.item()]
-                    
-                    # Store result
-                    results.append({
-                        'face_num': i + 1,
-                        'name': predicted_class,
-                        'confidence': confidence,
-                        'bbox': (x1, y1, x2, y2)
-                    })
+                if boxes is not None and len(boxes) > 0:
+                    st.success(f"✅ Detected **{len(boxes)}** face(s)")
                     
                     # Draw on image
-                    color = (0, 255, 0) if confidence >= confidence_threshold else (255, 165, 0)
-                    cv2.rectangle(img_draw, (x1, y1), (x2, y2), color, 2)
+                    img_draw = image_np.copy()
                     
-                    # Draw label
-                    if confidence >= confidence_threshold:
-                        label = f"{predicted_class} ({confidence*100:.1f}%)"
-                    else:
-                        label = f"Unknown ({confidence*100:.1f}%)"
+                    results = []
                     
-                    # Background for text
-                    (text_width, text_height), _ = cv2.getTextSize(
-                        label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2
-                    )
-                    cv2.rectangle(
-                        img_draw,
-                        (x1, y1 - text_height - 10),
-                        (x1 + text_width, y1),
-                        color,
-                        -1
-                    )
-                    cv2.putText(
-                        img_draw,
-                        label,
-                        (x1, y1 - 5),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        0.6,
-                        (255, 255, 255),
-                        2
-                    )
-                
-                with col2:
-                    st.subheader("🎯 Detection Results")
-                    st.image(img_draw, use_container_width=True)
-                
-                # Show results table
-                st.markdown("---")
-                st.subheader("📋 Detailed Results")
-                
-                for result in results:
-                    with st.expander(f"Face #{result['face_num']}: {result['name']}", expanded=True):
-                        col_a, col_b, col_c = st.columns(3)
-                        with col_a:
-                            st.metric("Name", result['name'])
-                        with col_b:
-                            st.metric("Confidence", f"{result['confidence']*100:.2f}%")
-                        with col_c:
-                            status = "✅ Recognized" if result['confidence'] >= confidence_threshold else "⚠️ Low Confidence"
-                            st.metric("Status", status)
+                    for i, (box, prob) in enumerate(zip(boxes, probs)):
+                        if prob < 0.9:  # MTCNN confidence threshold
+                            continue
                         
-                        # Record attendance if enabled and confidence is high enough
-                        if enable_attendance and result['confidence'] >= confidence_threshold:
-                            try:
-                                entry = attendance.record_attendance(
-                                    result['name'], 
-                                    result['confidence'],
-                                    status='present'
-                                )
-                                st.success(f"✅ Attendance recorded at {entry['time']}")
-                            except Exception as e:
-                                st.warning(f"⚠️ Could not record attendance: {e}")
-                
-            else:
-                st.warning("⚠️ No faces detected in the image. Please try another image.")
+                        # Extract face region
+                        x1, y1, x2, y2 = [int(b) for b in box]
+                        x1, y1 = max(0, x1), max(0, y1)
+                        x2, y2 = min(image_np.shape[1], x2), min(image_np.shape[0], y2)
+                        
+                        face = image_np[y1:y2, x1:x2]
+                        
+                        if face.size == 0:
+                            continue
+                        
+                        # Preprocess face
+                        face_pil = Image.fromarray(face).resize((IMG_SIZE, IMG_SIZE))
+                        face_tensor = transform(face_pil).unsqueeze(0).to(device)
+                        
+                        # Predict
+                        with torch.no_grad():
+                            outputs = model(face_tensor)
+                            probs_pred = torch.nn.functional.softmax(outputs, dim=1)
+                            confidence, predicted_idx = torch.max(probs_pred, 1)
+                            
+                            confidence = confidence.item()
+                            predicted_class = class_names[predicted_idx.item()]
+                        
+                        # Store result
+                        results.append({
+                            'face_num': i + 1,
+                            'name': predicted_class,
+                            'confidence': confidence,
+                            'bbox': (x1, y1, x2, y2)
+                        })
+                        
+                        # Draw on image
+                        color = (0, 255, 0) if confidence >= confidence_threshold else (255, 165, 0)
+                        cv2.rectangle(img_draw, (x1, y1), (x2, y2), color, 2)
+                        
+                        # Draw label
+                        if confidence >= confidence_threshold:
+                            label = f"{predicted_class} ({confidence*100:.1f}%)"
+                        else:
+                            label = f"Unknown ({confidence*100:.1f}%)"
+                        
+                        # Background for text
+                        (text_width, text_height), _ = cv2.getTextSize(
+                            label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2
+                        )
+                        cv2.rectangle(
+                            img_draw,
+                            (x1, y1 - text_height - 10),
+                            (x1 + text_width, y1),
+                            color,
+                            -1
+                        )
+                        cv2.putText(
+                            img_draw,
+                            label,
+                            (x1, y1 - 5),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.6,
+                            (255, 255, 255),
+                            2
+                        )
+                    
+                    with col2:
+                        st.subheader("🎯 Detection Results")
+                        st.image(img_draw, use_container_width=True)
+                    
+                    # Show results table
+                    st.markdown("---")
+                    st.subheader("📋 Detailed Results")
+                    
+                    for result in results:
+                        with st.expander(f"Face #{result['face_num']}: {result['name']}", expanded=True):
+                            col_a, col_b, col_c = st.columns(3)
+                            with col_a:
+                                st.metric("Name", result['name'])
+                            with col_b:
+                                st.metric("Confidence", f"{result['confidence']*100:.2f}%")
+                            with col_c:
+                                status = "✅ Recognized" if result['confidence'] >= confidence_threshold else "⚠️ Low Confidence"
+                                st.metric("Status", status)
+                            
+                            # Record attendance if enabled and confidence is high enough
+                            if enable_attendance and result['confidence'] >= confidence_threshold:
+                                try:
+                                    entry = attendance.record_attendance(
+                                        result['name'], 
+                                        result['confidence'],
+                                        status='present'
+                                    )
+                                    st.success(f"✅ Attendance recorded at {entry['time']}")
+                                except Exception as e:
+                                    st.warning(f"⚠️ Could not record attendance: {e}")
+                    
+                else:
+                    st.warning("⚠️ No faces detected in the image. Please try another image.")
 
 with tab2:
     st.header("📊 Attendance Dashboard")
