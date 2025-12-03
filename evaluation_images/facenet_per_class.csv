@@ -1,0 +1,71 @@
+Class,Precision,Recall,F1-Score
+Abraham Ganda Napitu,1.0,1.0,1.0
+Abu Bakar Siddiq Siregar,1.0,1.0,1.0
+Ahmad Faqih Hasani,1.0,1.0,1.0
+Aldi Sanjaya,1.0,0.75,0.8571428571428571
+Alfajar,1.0,1.0,1.0
+Alief Fathur Rahman,0.96875,0.9393939393939394,0.9538461538461539
+Arkan Hariz Chandrawinata Liem,1.0,1.0,1.0
+Bayu Ega Ferdana,1.0,1.0,1.0
+Bayu Prameswara Haris,1.0,1.0,1.0
+Bezalel Samuel Manik,1.0,1.0,1.0
+Bintang Fikri Fauzan,1.0,0.8787878787878788,0.9354838709677419
+Boy Sandro Sigiro,0.8846153846153846,0.9583333333333334,0.92
+Desty Ananta Purba,1.0,1.0,1.0
+Dimas Azi Rajab Aizar,1.0,1.0,1.0
+Dito Rifki Irawan,0.9428571428571428,1.0,0.9705882352941176
+Dwi Arthur Revangga,1.0,1.0,1.0
+Dyo Dwi Carol Bukit,0.9428571428571428,1.0,0.9705882352941176
+Eden Wijaya,1.0,1.0,1.0
+Eichal Elphindo Ginting,1.0,1.0,1.0
+Elsa Elisa Yohana Sianturi,1.0,1.0,1.0
+Fajrul Ramadhana Aqsa,0.9393939393939394,0.9393939393939394,0.9393939393939394
+Falih Dzakwan Zuhdi,1.0,1.0,1.0
+Fathan Andi Kartagama,0.9375,0.9090909090909091,0.9230769230769231
+Fayyadh Abdillah,1.0,1.0,1.0
+Femmy Aprillia Putri,1.0,1.0,1.0
+Ferdana Al Hakim,0.9705882352941176,1.0,0.9850746268656716
+Festus Mikhael,1.0,1.0,1.0
+Fiqri Aldiansyah,0.9583333333333334,0.9583333333333334,0.9583333333333334
+Freddy Harahap,1.0,0.9090909090909091,0.9523809523809523
+Gabriella Natalya Rumapea,1.0,1.0,1.0
+Garland Wijaya,1.0,1.0,1.0
+Havidz Ridho Pratama,1.0,1.0,1.0
+Ichsan Kuntadi Baskara,1.0,1.0,1.0
+Ikhsannudin Lathief,1.0,1.0,1.0
+Intan Permata Sari,0.9705882352941176,1.0,0.9850746268656716
+JP. Rafi Radiktya Arkan. R. AZ,1.0,1.0,1.0
+Joshia Fernandes Sectio Purba,1.0,1.0,1.0
+Joshua Palti Sinaga,0.9655172413793104,0.9824561403508771,0.9739130434782609
+Joy Daniella V,0.9705882352941176,1.0,0.9850746268656716
+Joyapul Hanscalvin Panjaitan,0.9428571428571428,1.0,0.9705882352941176
+Kayla Chika Lathisya,1.0,1.0,1.0
+Kenneth Austin Wijaya,1.0,1.0,1.0
+Kevin Naufal Dany,1.0,1.0,1.0
+Lois Novel E Gurning,1.0,1.0,1.0
+Machzaul harmansyah,1.0,1.0,1.0
+Martua Kevin A.M.H.Lubis,1.0,1.0,1.0
+Muhammad Fasya Atthoriq,1.0,0.9166666666666666,0.9565217391304348
+Muhammad Nelwan Fakhri,1.0,1.0,1.0
+Muhammad Riveldo Hermawan Putra,1.0,1.0,1.0
+Muhammad Zada Rizki,1.0,1.0,1.0
+Mychael Daniel N,1.0,1.0,1.0
+Nasya Aulia Efendi,1.0,0.9696969696969697,0.9846153846153847
+Raditya Erza Farandi,0.9705882352941176,1.0,0.9850746268656716
+Rahmat Aldi Nasda,1.0,1.0,1.0
+Randy Hendriyawan,1.0,0.9393939393939394,0.96875
+Rayhan Fadel Irwanto,1.0,1.0,1.0
+Rayhan Fatih Gunawan,1.0,1.0,1.0
+Reynaldi Cristian Simamora,1.0,1.0,1.0
+Rizky Abdillah,1.0,1.0,1.0
+Royfran Roger Valentino,1.0,1.0,1.0
+Rustian Afencius Marbun,1.0,0.9696969696969697,0.9846153846153847
+Shintya Ayu Wardani,0.9696969696969697,1.0,0.9846153846153847
+Sikah Nubuahtul Ilmi,0.9583333333333334,0.9583333333333334,0.9583333333333334
+William Chan,0.9705882352941176,1.0,0.9850746268656716
+Yohanna Anzelika Sitepu,1.0,1.0,1.0
+Zakhi algifari,0.9705882352941176,1.0,0.9850746268656716
+Zaky Ahmad Makarim,1.0,1.0,1.0
+Zefanya Danovanta Tarigan,1.0,1.0,1.0
+Zidan Raihan,0.9411764705882353,0.9696969696969697,0.9552238805970149
+hayyatul fajri,1.0,1.0,1.0
